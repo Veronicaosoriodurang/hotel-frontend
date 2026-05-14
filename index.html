@@ -1,998 +1,191 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grand Hotel — Panel</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #0f1419;
-      --surface: #1a222d;
-      --surface-hover: #232d3a;
-      --border: #2d3a4a;
-      --text: #e8eef4;
-      --muted: #8fa3b8;
-      --accent: #c9a227;
-      --accent-soft: rgba(201, 162, 39, 0.15);
-      --success: #3dd68c;
-      --error: #f87171;
-      --radius: 12px;
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "DM Sans", system-ui, sans-serif;
-      background: var(--bg);
-      background-image:
-        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(201, 162, 39, 0.12), transparent),
-        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(45, 58, 74, 0.5), transparent);
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    .app {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem 3rem;
-    }
-
-    header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 0.75rem;
-      margin-bottom: 1.75rem;
-      padding-bottom: 1.25rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    header h1 {
-      margin: 0;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: clamp(1.75rem, 4vw, 2.25rem);
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-
-    header h1 span {
-      color: var(--accent);
-    }
-
-    .subtitle {
-      margin: 0.35rem 0 0;
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
-    .api-badge {
-      font-size: 0.75rem;
-      color: var(--muted);
-      padding: 0.35rem 0.65rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-    }
-
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .tabs button {
-      font-family: inherit;
-      font-size: 0.9rem;
-      font-weight: 600;
-      padding: 0.65rem 1.1rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      color: var(--muted);
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-    }
-
-    .tabs button:hover {
-      background: var(--surface-hover);
-      color: var(--text);
-    }
-
-    .tabs button.active {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .panel {
-      display: none;
-      animation: fadeIn 0.25s ease;
-    }
-
-    .panel.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .toolbar h2 {
-      margin: 0;
-      font-size: 1.15rem;
-      font-weight: 600;
-    }
-
-    .btn {
-      font-family: inherit;
-      font-size: 0.875rem;
-      font-weight: 600;
-      padding: 0.55rem 1rem;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: filter 0.15s, transform 0.1s;
-    }
-
-    .btn:active {
-      transform: scale(0.98);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #1a1408;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.08);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
-
-    .btn-ghost:hover {
-      color: var(--text);
-      background: var(--surface-hover);
-    }
-
-    .btn-danger {
-      background: rgba(248, 113, 113, 0.2);
-      color: var(--error);
-      border: 1px solid rgba(248, 113, 113, 0.35);
-    }
-
-    .btn-danger:hover {
-      background: rgba(248, 113, 113, 0.3);
-    }
-
-    .btn-sm {
-      padding: 0.35rem 0.65rem;
-      font-size: 0.8rem;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      margin-bottom: 1.25rem;
-      box-shadow: var(--shadow);
-    }
-
-    .card h3 {
-      margin: 0 0 1rem;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--muted);
-      margin-bottom: 0.35rem;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 0.6rem 0.75rem;
-      font-family: inherit;
-      font-size: 0.9rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    input:focus,
-    select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px var(--accent-soft);
-    }
-
-    .form-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1.1rem;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      box-shadow: var(--shadow);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
-
-    th,
-    td {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-
-    th {
-      font-weight: 600;
-      color: var(--muted);
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tbody tr:hover {
-      background: var(--surface-hover);
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-    }
-
-    .empty {
-      padding: 2rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .alert {
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      font-size: 0.875rem;
-      display: none;
-    }
-
-    .alert.visible {
-      display: block;
-    }
-
-    .alert-success {
-      background: rgba(61, 214, 140, 0.12);
-      border: 1px solid rgba(61, 214, 140, 0.35);
-      color: var(--success);
-    }
-
-    .alert-error {
-      background: rgba(248, 113, 113, 0.12);
-      border: 1px solid rgba(248, 113, 113, 0.35);
-      color: var(--error);
-    }
-
-    #toast {
-      position: fixed;
-      bottom: 1.25rem;
-      right: 1.25rem;
-      max-width: min(420px, calc(100vw - 2.5rem));
-      padding: 0.85rem 1.1rem;
-      border-radius: var(--radius);
-      font-size: 0.875rem;
-      font-weight: 500;
-      box-shadow: var(--shadow);
-      z-index: 1000;
-      transform: translateY(120%);
-      opacity: 0;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    #toast.visible {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    #toast.success {
-      background: #152a22;
-      border: 1px solid rgba(61, 214, 140, 0.4);
-      color: var(--success);
-    }
-
-    #toast.error {
-      background: #2a1515;
-      border: 1px solid rgba(248, 113, 113, 0.4);
-      color: var(--error);
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    code {
-      font-size: 0.8em;
-      background: var(--bg);
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Grand Hotel - Clientes</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1419;color:#e8eef4;min-height:100vh}
+header{background:#1a222d;border-bottom:1px solid #2d3a4a;padding:1.25rem 2rem}
+header h1{font-size:1.4rem;font-weight:700}
+header h1 span{color:#c9a227}
+header p{color:#8fa3b8;font-size:.85rem;margin-top:.25rem}
+main{max-width:900px;margin:2rem auto;padding:0 1rem}
+.card{background:#1a222d;border:1px solid #2d3a4a;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+.card h2{font-size:1rem;font-weight:600;margin-bottom:1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.field label{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;color:#8fa3b8;margin-bottom:.3rem}
+.field input{width:100%;padding:.6rem .8rem;background:#0f1419;border:1px solid #2d3a4a;border-radius:8px;color:#e8eef4;font-size:.9rem}
+.field input:focus{outline:none;border-color:#c9a227}
+.btns{display:flex;gap:.5rem;margin-top:1rem}
+button{border:none;border-radius:8px;padding:.55rem 1.1rem;font-size:.875rem;font-weight:600;cursor:pointer}
+.btn-gold{background:#c9a227;color:#1a1408}
+.btn-gold:hover{filter:brightness(1.1)}
+.btn-gray{background:#232d3a;color:#8fa3b8;border:1px solid #2d3a4a}
+.btn-gray:hover{color:#e8eef4}
+.btn-red{background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3);padding:.35rem .75rem;font-size:.8rem}
+.btn-red:hover{background:rgba(248,113,113,.25)}
+.btn-edit{background:rgba(201,162,39,.15);color:#c9a227;border:1px solid rgba(201,162,39,.3);padding:.35rem .75rem;font-size:.8rem}
+.btn-edit:hover{background:rgba(201,162,39,.25)}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.bar h2{margin:0}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+th{background:rgba(0,0,0,.3);color:#8fa3b8;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;padding:.65rem 1rem;text-align:left}
+td{padding:.75rem 1rem;border-bottom:1px solid #232d3a}
+tr:last-child td{border:none}
+tbody tr:hover{background:#1e2a38}
+.acts{display:flex;gap:.4rem}
+.empty{text-align:center;padding:2.5rem;color:#8fa3b8}
+.alerta{padding:.65rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.875rem;display:none}
+.alerta.show{display:block}
+.alerta.ok{background:rgba(61,214,140,.12);border:1px solid rgba(61,214,140,.3);color:#3dd68c}
+.alerta.err{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:#f87171}
+</style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div>
-        <h1>Grand <span>Hotel</span></h1>
-        <p class="subtitle">Panel de gestión — frontend independiente (HTML, CSS y JavaScript)</p>
-      </div>
-      <span class="api-badge" title="Base de la API">API: localhost:8080</span>
-    </header>
 
-    <nav class="tabs" role="tablist" aria-label="Secciones">
-      <button type="button" role="tab" class="active" data-tab="clientes" aria-selected="true">Clientes</button>
-      <button type="button" role="tab" data-tab="habitaciones" aria-selected="false">Habitaciones</button>
-      <button type="button" role="tab" data-tab="reservas" aria-selected="false">Reservas</button>
-    </nav>
+<header>
+  <h1>Grand <span>Hotel</span></h1>
+  <p>Gestión de Clientes · Frontend independiente · API: localhost:8080</p>
+</header>
 
-    <!-- Clientes -->
-    <section id="panel-clientes" class="panel active" role="tabpanel" aria-labelledby="tab-clientes">
-      <div id="alert-clientes" class="alert" role="status"></div>
-      <div class="toolbar">
-        <h2>Clientes</h2>
-        <button type="button" class="btn btn-primary" id="btn-nuevo-cliente">Nuevo cliente</button>
-      </div>
+<main>
+  <div id="alerta" class="alerta"></div>
 
-      <div class="card" id="card-form-cliente" style="display: none;">
-        <h3 id="titulo-form-cliente">Crear cliente</h3>
-        <form id="form-cliente">
-          <input type="hidden" id="cliente-id" name="id" />
-          <div class="form-grid">
-            <div>
-              <label for="cliente-nombre">Nombre</label>
-              <input id="cliente-nombre" name="nombre" required autocomplete="given-name" />
-            </div>
-            <div>
-              <label for="cliente-apellidos">Apellidos</label>
-              <input id="cliente-apellidos" name="apellidos" required autocomplete="family-name" />
-            </div>
-            <div>
-              <label for="cliente-email">Email</label>
-              <input id="cliente-email" name="email" type="email" required autocomplete="email" />
-            </div>
-            <div>
-              <label for="cliente-telefono">Teléfono</label>
-              <input id="cliente-telefono" name="telefono" type="tel" autocomplete="tel" />
-            </div>
-            <div>
-              <label for="cliente-documento">Documento (DNI / pasaporte)</label>
-              <input id="cliente-documento" name="documento" autocomplete="off" />
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <button type="button" class="btn btn-ghost" id="btn-cancelar-cliente">Cancelar</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Teléfono</th>
-              <th>Documento</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-clientes"></tbody>
-        </table>
-        <div id="empty-clientes" class="empty" style="display: none;">No hay clientes. Cree el primero con «Nuevo cliente».</div>
-      </div>
-    </section>
-
-    <!-- Habitaciones -->
-    <section id="panel-habitaciones" class="panel" role="tabpanel" hidden>
-      <div id="alert-habitaciones" class="alert" role="status"></div>
-      <div class="toolbar">
-        <h2>Habitaciones</h2>
-        <button type="button" class="btn btn-primary" id="btn-nueva-habitacion">Nueva habitación</button>
-      </div>
-
-      <div class="card" id="card-form-habitacion" style="display: none;">
-        <h3 id="titulo-form-habitacion">Crear habitación</h3>
-        <form id="form-habitacion">
-          <input type="hidden" id="habitacion-id" name="id" />
-          <div class="form-grid">
-            <div>
-              <label for="habitacion-numero">Número</label>
-              <input id="habitacion-numero" name="numero" required inputmode="numeric" />
-            </div>
-            <div>
-              <label for="habitacion-tipo">Tipo</label>
-              <input id="habitacion-tipo" name="tipo" placeholder="Ej. Suite, Doble" required />
-            </div>
-            <div>
-              <label for="habitacion-precio">Precio por noche</label>
-              <input id="habitacion-precio" name="precio" type="number" step="0.01" min="0" required />
-            </div>
-            <div>
-              <label for="habitacion-disponible">Disponible</label>
-              <select id="habitacion-disponible" name="disponible">
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <button type="button" class="btn btn-ghost" id="btn-cancelar-habitacion">Cancelar</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Número</th>
-              <th>Tipo</th>
-              <th>Precio / noche</th>
-              <th>Disponible</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-habitaciones"></tbody>
-        </table>
-        <div id="empty-habitaciones" class="empty" style="display: none;">No hay habitaciones registradas.</div>
-      </div>
-    </section>
-
-    <!-- Reservas (solo lectura) -->
-    <section id="panel-reservas" class="panel" role="tabpanel" hidden>
-      <div id="alert-reservas" class="alert" role="status"></div>
-      <div class="toolbar">
-        <h2>Reservas</h2>
-        <button type="button" class="btn btn-ghost" id="btn-refrescar-reservas">Actualizar lista</button>
-      </div>
-      <p class="muted" style="margin: -0.5rem 0 1rem;">Vista de solo lectura. Las reservas se gestionan desde el backend o futuras ampliaciones del panel.</p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Cliente</th>
-              <th>Habitación</th>
-              <th>Entrada</th>
-              <th>Salida</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-reservas"></tbody>
-        </table>
-        <div id="empty-reservas" class="empty" style="display: none;">No hay reservas.</div>
-      </div>
-    </section>
+  <!-- FORMULARIO -->
+  <div class="card">
+    <h2 id="form-titulo">Nuevo cliente</h2>
+    <div class="grid">
+      <div class="field"><label>Nombre</label><input id="nombre" placeholder="Nombre"/></div>
+      <div class="field"><label>Apellido</label><input id="apellido" placeholder="Apellido"/></div>
+      <div class="field"><label>Email</label><input id="email" type="email" placeholder="correo@email.com"/></div>
+    </div>
+    <div class="btns">
+      <button class="btn-gold" onclick="guardar()">Guardar</button>
+      <button class="btn-gray" onclick="limpiar()">Cancelar</button>
+    </div>
   </div>
 
-  <div id="toast" role="status" aria-live="polite"></div>
+  <!-- TABLA -->
+  <div class="card">
+    <div class="bar">
+      <h2>Lista de clientes</h2>
+      <button class="btn-gray" onclick="cargar()">Actualizar</button>
+    </div>
+    <div id="tabla-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Acciones</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div id="empty" class="empty" style="display:none">No hay clientes registrados.</div>
+    </div>
+  </div>
+</main>
 
-  <script>
-    (function () {
-      "use strict";
+<script>
+var API = "http://localhost:8080/api/clientes";
+var editId = null;
 
-      var API_BASE = "http://localhost:8080/api";
+function alerta(msg, tipo) {
+  var el = document.getElementById("alerta");
+  el.textContent = msg;
+  el.className = "alerta show " + tipo;
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove("show"); }, 4000);
+}
 
-      function showToast(message, type) {
-        var el = document.getElementById("toast");
-        el.textContent = message;
-        el.className = "visible " + (type === "success" ? "success" : "error");
-        clearTimeout(el._hideTimer);
-        el._hideTimer = setTimeout(function () {
-          el.classList.remove("visible");
-        }, 4000);
-      }
+function esc(s) {
+  if (s == null) return "";
+  var d = document.createElement("div");
+  d.textContent = String(s);
+  return d.innerHTML;
+}
 
-      function showPanelAlert(panelPrefix, message, type) {
-        var el = document.getElementById("alert-" + panelPrefix);
-        if (!el) return;
-        el.textContent = message;
-        el.className = "alert visible " + (type === "success" ? "alert-success" : "alert-error");
-        clearTimeout(el._hideTimer);
-        el._hideTimer = setTimeout(function () {
-          el.classList.remove("visible");
-        }, 6000);
-      }
+async function api(method, url, body) {
+  var opts = { method: method, headers: { "Content-Type": "application/json", "Accept": "application/json" } };
+  if (body != null) opts.body = JSON.stringify(body);
+  var res = await fetch(url, opts);
+  var txt = await res.text();
+  var data = null;
+  if (txt) { try { data = JSON.parse(txt); } catch(e) { data = txt; } }
+  if (!res.ok) {
+    var m = (data && typeof data === "object" && (data.message || data.error)) || res.statusText || "Error " + res.status;
+    throw new Error(m);
+  }
+  return data;
+}
 
-      function hidePanelAlert(panelPrefix) {
-        var el = document.getElementById("alert-" + panelPrefix);
-        if (el) el.classList.remove("visible");
-      }
+function limpiar() {
+  editId = null;
+  document.getElementById("nombre").value = "";
+  document.getElementById("apellido").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("form-titulo").textContent = "Nuevo cliente";
+}
 
-      async function request(method, path, body) {
-        var opts = {
-          method: method,
-          headers: { Accept: "application/json", "Content-Type": "application/json" },
-        };
-        if (body !== undefined && body !== null) opts.body = JSON.stringify(body);
-        var res = await fetch(API_BASE + path, opts);
-        var text = await res.text();
-        var data = null;
-        if (text) {
-          try {
-            data = JSON.parse(text);
-          } catch (e) {
-            data = text;
-          }
-        }
-        if (!res.ok) {
-          var msg =
-            (data && typeof data === "object" && (data.message || data.error)) ||
-            (typeof data === "string" ? data : "") ||
-            res.statusText;
-          var err = new Error(msg || "Error HTTP " + res.status);
-          err.status = res.status;
-          err.body = data;
-          throw err;
-        }
-        return data;
-      }
+function editar(id, nombre, apellido, email) {
+  editId = id;
+  document.getElementById("nombre").value = nombre;
+  document.getElementById("apellido").value = apellido;
+  document.getElementById("email").value = email;
+  document.getElementById("form-titulo").textContent = "Editar cliente #" + id;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-      /** Normaliza respuesta GET lista (array o página Spring) */
-      function asArray(payload) {
-        if (Array.isArray(payload)) return payload;
-        if (payload && Array.isArray(payload.content)) return payload.content;
-        if (payload && payload._embedded) {
-          var emb = payload._embedded;
-          var first = Object.keys(emb)[0];
-          if (first && Array.isArray(emb[first])) return emb[first];
-        }
-        return [];
-      }
+async function guardar() {
+  var nombre = document.getElementById("nombre").value.trim();
+  var apellido = document.getElementById("apellido").value.trim();
+  var email = document.getElementById("email").value.trim();
+  if (!nombre || !apellido || !email) { alerta("Complete todos los campos", "err"); return; }
+  var body = { nombre: nombre, apellido: apellido, email: email };
+  try {
+    if (editId != null) {
+      body.id = editId;
+      await api("PUT", API + "/" + editId, body);
+      alerta("Cliente actualizado correctamente", "ok");
+    } else {
+      await api("POST", API, body);
+      alerta("Cliente creado correctamente", "ok");
+    }
+    limpiar();
+    cargar();
+  } catch(e) { alerta("Error: " + e.message, "err"); }
+}
 
-      function escapeHtml(s) {
-        if (s == null) return "";
-        var d = document.createElement("div");
-        d.textContent = String(s);
-        return d.innerHTML;
-      }
+async function eliminar(id) {
+  if (!confirm("¿Eliminar cliente #" + id + "?")) return;
+  try {
+    await api("DELETE", API + "/" + id, null);
+    alerta("Cliente eliminado", "ok");
+    cargar();
+  } catch(e) { alerta("Error: " + e.message, "err"); }
+}
 
-      function fmtBool(v) {
-        if (v === true || v === "true" || v === 1 || v === "1") return "Sí";
-        if (v === false || v === "false" || v === 0 || v === "0") return "No";
-        return "—";
-      }
+async function cargar() {
+  try {
+    var data = await api("GET", API, null);
+    var list = Array.isArray(data) ? data : (data.content || []);
+    var tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+    document.getElementById("empty").style.display = list.length ? "none" : "block";
+    list.forEach(function(c) {
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td>" + esc(c.id) + "</td>" +
+        "<td>" + esc(c.nombre) + "</td>" +
+        "<td>" + esc(c.apellido) + "</td>" +
+        "<td>" + esc(c.email) + "</td>" +
+        "<td class='acts'>" +
+          "<button class='btn-edit' onclick='editar(" + c.id + ",\"" + esc(c.nombre) + "\",\"" + esc(c.apellido) + "\",\"" + esc(c.email) + "\")'>Editar</button>" +
+          "<button class='btn-red' onclick='eliminar(" + c.id + ")'>Eliminar</button>" +
+        "</td>";
+      tbody.appendChild(tr);
+    });
+  } catch(e) { alerta("No se pudo conectar al backend: " + e.message, "err"); }
+}
 
-      function pick(obj, keys) {
-        for (var i = 0; i < keys.length; i++) {
-          if (obj && obj[keys[i]] != null && obj[keys[i]] !== "") return obj[keys[i]];
-        }
-        return "";
-      }
-
-      /* ---------- Pestañas ---------- */
-      var tabButtons = document.querySelectorAll(".tabs [data-tab]");
-      var panels = {
-        clientes: document.getElementById("panel-clientes"),
-        habitaciones: document.getElementById("panel-habitaciones"),
-        reservas: document.getElementById("panel-reservas"),
-      };
-
-      function switchTab(name) {
-        tabButtons.forEach(function (btn) {
-          var on = btn.getAttribute("data-tab") === name;
-          btn.classList.toggle("active", on);
-          btn.setAttribute("aria-selected", on ? "true" : "false");
-        });
-        Object.keys(panels).forEach(function (key) {
-          var p = panels[key];
-          if (!p) return;
-          var active = key === name;
-          p.classList.toggle("active", active);
-          p.hidden = !active;
-        });
-        if (name === "reservas") loadReservas();
-      }
-
-      tabButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          switchTab(btn.getAttribute("data-tab"));
-        });
-      });
-
-      /* ---------- Clientes ---------- */
-      var tbodyClientes = document.getElementById("tbody-clientes");
-      var emptyClientes = document.getElementById("empty-clientes");
-      var cardFormCliente = document.getElementById("card-form-cliente");
-      var formCliente = document.getElementById("form-cliente");
-      var tituloFormCliente = document.getElementById("titulo-form-cliente");
-      var editingClienteId = null;
-
-      function openFormCliente(create) {
-        editingClienteId = create ? null : editingClienteId;
-        if (create) {
-          tituloFormCliente.textContent = "Crear cliente";
-          formCliente.reset();
-          document.getElementById("cliente-id").value = "";
-          editingClienteId = null;
-        }
-        cardFormCliente.style.display = "block";
-      }
-
-      function closeFormCliente() {
-        cardFormCliente.style.display = "none";
-        formCliente.reset();
-        document.getElementById("cliente-id").value = "";
-        editingClienteId = null;
-        tituloFormCliente.textContent = "Crear cliente";
-      }
-
-      document.getElementById("btn-nuevo-cliente").addEventListener("click", function () {
-        hidePanelAlert("clientes");
-        openFormCliente(true);
-      });
-      document.getElementById("btn-cancelar-cliente").addEventListener("click", closeFormCliente);
-
-      async function loadClientes() {
-        hidePanelAlert("clientes");
-        try {
-          var list = asArray(await request("GET", "/clientes", null));
-          tbodyClientes.innerHTML = "";
-          emptyClientes.style.display = list.length ? "none" : "block";
-          list.forEach(function (c) {
-            var id = pick(c, ["id"]);
-            var tr = document.createElement("tr");
-            tr.innerHTML =
-              "<td>" +
-              escapeHtml(id) +
-              "</td><td>" +
-              escapeHtml(pick(c, ["nombre"]) + " " + pick(c, ["apellidos", "apellido"])) +
-              "</td><td>" +
-              escapeHtml(pick(c, ["email", "correo"])) +
-              "</td><td>" +
-              escapeHtml(pick(c, ["telefono", "telefonoMovil"])) +
-              "</td><td>" +
-              escapeHtml(pick(c, ["documento", "dni", "numeroDocumento"])) +
-              '</td><td class="actions"><button type="button" class="btn btn-ghost btn-sm" data-action="edit" data-id="' +
-              escapeHtml(id) +
-              '">Editar</button> <button type="button" class="btn btn-danger btn-sm" data-action="del" data-id="' +
-              escapeHtml(id) +
-              '">Eliminar</button></td>';
-            tbodyClientes.appendChild(tr);
-          });
-        } catch (e) {
-          showPanelAlert("clientes", "No se pudieron cargar los clientes: " + e.message, "error");
-          showToast(e.message, "error");
-        }
-      }
-
-      tbodyClientes.addEventListener("click", async function (ev) {
-        var t = ev.target;
-        if (t.tagName !== "BUTTON") return;
-        var id = t.getAttribute("data-id");
-        var action = t.getAttribute("data-action");
-        if (!id) return;
-        if (action === "edit") {
-          hidePanelAlert("clientes");
-          try {
-            var c = await request("GET", "/clientes/" + encodeURIComponent(id), null);
-            editingClienteId = pick(c, ["id"]);
-            document.getElementById("cliente-id").value = editingClienteId;
-            document.getElementById("cliente-nombre").value = pick(c, ["nombre"]);
-            document.getElementById("cliente-apellidos").value = pick(c, ["apellidos", "apellido"]);
-            document.getElementById("cliente-email").value = pick(c, ["email", "correo"]);
-            document.getElementById("cliente-telefono").value = pick(c, ["telefono", "telefonoMovil"]);
-            document.getElementById("cliente-documento").value = pick(c, ["documento", "dni", "numeroDocumento"]);
-            tituloFormCliente.textContent = "Editar cliente";
-            cardFormCliente.style.display = "block";
-          } catch (e) {
-            showPanelAlert("clientes", "Error al cargar el cliente: " + e.message, "error");
-            showToast(e.message, "error");
-          }
-        }
-        if (action === "del") {
-          if (!confirm("¿Eliminar este cliente? Esta acción no se puede deshacer.")) return;
-          try {
-            await request("DELETE", "/clientes/" + encodeURIComponent(id), null);
-            showToast("Cliente eliminado", "success");
-            showPanelAlert("clientes", "Cliente eliminado correctamente.", "success");
-            await loadClientes();
-          } catch (e) {
-            showPanelAlert("clientes", "Error al eliminar: " + e.message, "error");
-            showToast(e.message, "error");
-          }
-        }
-      });
-
-      formCliente.addEventListener("submit", async function (ev) {
-        ev.preventDefault();
-        hidePanelAlert("clientes");
-        var payload = {
-          nombre: document.getElementById("cliente-nombre").value.trim(),
-          apellidos: document.getElementById("cliente-apellidos").value.trim(),
-          email: document.getElementById("cliente-email").value.trim(),
-          telefono: document.getElementById("cliente-telefono").value.trim(),
-          documento: document.getElementById("cliente-documento").value.trim(),
-        };
-        try {
-          if (editingClienteId != null && editingClienteId !== "") {
-            payload.id = editingClienteId;
-            await request("PUT", "/clientes/" + encodeURIComponent(editingClienteId), payload);
-            showToast("Cliente actualizado", "success");
-            showPanelAlert("clientes", "Cliente actualizado correctamente.", "success");
-          } else {
-            await request("POST", "/clientes", payload);
-            showToast("Cliente creado", "success");
-            showPanelAlert("clientes", "Cliente creado correctamente.", "success");
-          }
-          closeFormCliente();
-          await loadClientes();
-        } catch (e) {
-          showPanelAlert("clientes", "Error al guardar: " + e.message, "error");
-          showToast(e.message, "error");
-        }
-      });
-
-      /* ---------- Habitaciones ---------- */
-      var tbodyHab = document.getElementById("tbody-habitaciones");
-      var emptyHab = document.getElementById("empty-habitaciones");
-      var cardFormHab = document.getElementById("card-form-habitacion");
-      var formHab = document.getElementById("form-habitacion");
-      var tituloFormHab = document.getElementById("titulo-form-habitacion");
-      var editingHabId = null;
-
-      function parseDisponibleSelect() {
-        return document.getElementById("habitacion-disponible").value === "true";
-      }
-
-      function openFormHab(create) {
-        if (create) {
-          tituloFormHab.textContent = "Crear habitación";
-          formHab.reset();
-          document.getElementById("habitacion-id").value = "";
-          document.getElementById("habitacion-disponible").value = "true";
-          editingHabId = null;
-        }
-        cardFormHab.style.display = "block";
-      }
-
-      function closeFormHab() {
-        cardFormHab.style.display = "none";
-        formHab.reset();
-        document.getElementById("habitacion-disponible").value = "true";
-        editingHabId = null;
-        tituloFormHab.textContent = "Crear habitación";
-      }
-
-      document.getElementById("btn-nueva-habitacion").addEventListener("click", function () {
-        hidePanelAlert("habitaciones");
-        openFormHab(true);
-      });
-      document.getElementById("btn-cancelar-habitacion").addEventListener("click", closeFormHab);
-
-      async function loadHabitaciones() {
-        hidePanelAlert("habitaciones");
-        try {
-          var list = asArray(await request("GET", "/habitaciones", null));
-          tbodyHab.innerHTML = "";
-          emptyHab.style.display = list.length ? "none" : "block";
-          list.forEach(function (h) {
-            var id = pick(h, ["id"]);
-            var precio = pick(h, ["precio", "precioPorNoche", "precioNoche"]);
-            var disp = pick(h, ["disponible", "estaDisponible"]);
-            var tr = document.createElement("tr");
-            tr.innerHTML =
-              "<td>" +
-              escapeHtml(id) +
-              "</td><td>" +
-              escapeHtml(pick(h, ["numero", "numeroHabitacion"])) +
-              "</td><td>" +
-              escapeHtml(pick(h, ["tipo", "tipoHabitacion"])) +
-              "</td><td>" +
-              escapeHtml(precio !== "" ? precio : "—") +
-              "</td><td>" +
-              escapeHtml(fmtBool(disp)) +
-              '</td><td class="actions"><button type="button" class="btn btn-ghost btn-sm" data-hab="edit" data-id="' +
-              escapeHtml(id) +
-              '">Editar</button> <button type="button" class="btn btn-danger btn-sm" data-hab="del" data-id="' +
-              escapeHtml(id) +
-              '">Eliminar</button></td>';
-            tbodyHab.appendChild(tr);
-          });
-        } catch (e) {
-          showPanelAlert("habitaciones", "No se pudieron cargar las habitaciones: " + e.message, "error");
-          showToast(e.message, "error");
-        }
-      }
-
-      tbodyHab.addEventListener("click", async function (ev) {
-        var t = ev.target;
-        if (t.tagName !== "BUTTON") return;
-        var id = t.getAttribute("data-id");
-        var action = t.getAttribute("data-hab");
-        if (!id) return;
-        if (action === "edit") {
-          hidePanelAlert("habitaciones");
-          try {
-            var h = await request("GET", "/habitaciones/" + encodeURIComponent(id), null);
-            editingHabId = pick(h, ["id"]);
-            document.getElementById("habitacion-id").value = editingHabId;
-            document.getElementById("habitacion-numero").value = pick(h, ["numero", "numeroHabitacion"]);
-            document.getElementById("habitacion-tipo").value = pick(h, ["tipo", "tipoHabitacion"]);
-            var p = pick(h, ["precio", "precioPorNoche", "precioNoche"]);
-            document.getElementById("habitacion-precio").value = p !== "" ? p : "";
-            var d = pick(h, ["disponible", "estaDisponible"]);
-            document.getElementById("habitacion-disponible").value =
-              d === true || d === "true" || d === 1 || d === "1" ? "true" : "false";
-            tituloFormHab.textContent = "Editar habitación";
-            cardFormHab.style.display = "block";
-          } catch (e) {
-            showPanelAlert("habitaciones", "Error al cargar la habitación: " + e.message, "error");
-            showToast(e.message, "error");
-          }
-        }
-        if (action === "del") {
-          if (!confirm("¿Eliminar esta habitación?")) return;
-          try {
-            await request("DELETE", "/habitaciones/" + encodeURIComponent(id), null);
-            showToast("Habitación eliminada", "success");
-            showPanelAlert("habitaciones", "Habitación eliminada correctamente.", "success");
-            await loadHabitaciones();
-          } catch (e) {
-            showPanelAlert("habitaciones", "Error al eliminar: " + e.message, "error");
-            showToast(e.message, "error");
-          }
-        }
-      });
-
-      formHab.addEventListener("submit", async function (ev) {
-        ev.preventDefault();
-        hidePanelAlert("habitaciones");
-        var numRaw = document.getElementById("habitacion-numero").value.trim();
-        var precioRaw = document.getElementById("habitacion-precio").value;
-        var payload = {
-          numero: /^\d+$/.test(numRaw) ? parseInt(numRaw, 10) : numRaw,
-          tipo: document.getElementById("habitacion-tipo").value.trim(),
-          precio: precioRaw === "" ? null : parseFloat(precioRaw),
-          disponible: parseDisponibleSelect(),
-        };
-        try {
-          if (editingHabId != null && editingHabId !== "") {
-            payload.id = editingHabId;
-            await request("PUT", "/habitaciones/" + encodeURIComponent(editingHabId), payload);
-            showToast("Habitación actualizada", "success");
-            showPanelAlert("habitaciones", "Habitación actualizada correctamente.", "success");
-          } else {
-            await request("POST", "/habitaciones", payload);
-            showToast("Habitación creada", "success");
-            showPanelAlert("habitaciones", "Habitación creada correctamente.", "success");
-          }
-          closeFormHab();
-          await loadHabitaciones();
-        } catch (e) {
-          showPanelAlert("habitaciones", "Error al guardar: " + e.message, "error");
-          showToast(e.message, "error");
-        }
-      });
-
-      /* ---------- Reservas (solo listado) ---------- */
-      var tbodyRes = document.getElementById("tbody-reservas");
-      var emptyRes = document.getElementById("empty-reservas");
-
-      function resumenEntidad(ref, idKeys, nameKeys) {
-        if (ref == null) return "—";
-        if (typeof ref === "object") {
-          var name = pick(ref, nameKeys);
-          var i = pick(ref, idKeys);
-          if (name) return escapeHtml(name) + (i !== "" ? " <span class=\"muted\">(#" + escapeHtml(i) + ")</span>" : "");
-          if (i !== "") return "#" + escapeHtml(i);
-          return escapeHtml(JSON.stringify(ref).slice(0, 80));
-        }
-        return escapeHtml(String(ref));
-      }
-
-      async function loadReservas() {
-        hidePanelAlert("reservas");
-        try {
-          var list = asArray(await request("GET", "/reservas", null));
-          tbodyRes.innerHTML = "";
-          emptyRes.style.display = list.length ? "none" : "block";
-          list.forEach(function (r) {
-            var cliente = pick(r, ["cliente"]);
-            if (!cliente && r.clienteId != null) cliente = { id: r.clienteId };
-            var hab = pick(r, ["habitacion", "habitación"]);
-            if (!hab && r.habitacionId != null) hab = { id: r.habitacionId };
-            var fi = pick(r, ["fechaInicio", "fechaEntrada", "checkIn", "inicio"]);
-            var ff = pick(r, ["fechaFin", "fechaSalida", "checkOut", "fin"]);
-            var estado = pick(r, ["estado"]);
-            var tr = document.createElement("tr");
-            tr.innerHTML =
-              "<td>" +
-              escapeHtml(pick(r, ["id"])) +
-              "</td><td>" +
-              resumenEntidad(cliente, ["id"], ["nombre", "nombreCompleto", "email"]) +
-              "</td><td>" +
-              resumenEntidad(hab, ["id"], ["numero", "numeroHabitacion", "tipo", "tipoHabitacion"]) +
-              "</td><td>" +
-              escapeHtml(fi) +
-              "</td><td>" +
-              escapeHtml(ff) +
-              "</td><td>" +
-              escapeHtml(estado || "—") +
-              "</td>";
-            tbodyRes.appendChild(tr);
-          });
-        } catch (e) {
-          showPanelAlert("reservas", "No se pudieron cargar las reservas: " + e.message, "error");
-          showToast(e.message, "error");
-        }
-      }
-
-      document.getElementById("btn-refrescar-reservas").addEventListener("click", loadReservas);
-
-      /* Inicio */
-      loadClientes();
-      loadHabitaciones();
-    })();
-  </script>
+cargar();
+</script>
 </body>
 </html>
