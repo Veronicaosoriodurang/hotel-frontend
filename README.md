@@ -1,118 +1,133 @@
-Grand Hotel - Frontend Independiente
-=====================================
+# Grand Hotel — Frontend
 
-Frontend independiente para el sistema de gestion hotelera Grand Hotel.
-Desarrollado con HTML, CSS y JavaScript puro sin frameworks ni dependencias.
+Frontend independiente del sistema de gestion hotelera Grand Hotel.
+Desarrollado con HTML, CSS y JavaScript puro — sin frameworks ni dependencias.
 
----
-
-1. Descripcion
---------------
-
-Interfaz web independiente que consume la API REST del backend Spring Boot.
-Permite gestionar clientes con CRUD completo:
-listar, crear, editar y eliminar.
-
-Este proyecto es completamente independiente del backend.
-No requiere instalacion ni servidor propio.
-Solo necesita que el backend este corriendo en localhost:8080.
+> Este proyecto consume la API REST del backend. Ver: [demo (backend)](https://github.com/Veronicaosoriodurang/demo)
 
 ---
 
-2. Tecnologias
---------------
+## Navegacion rapida
 
-    HTML5       Estructura de la pagina
-    CSS3        Estilos y diseno
-    JavaScript  Logica y consumo de la API con fetch nativo
-
-Sin frameworks, sin dependencias, sin instalacion.
-
----
-
-3. Estructura del proyecto
----------------------------
-
-    hotel-frontend/
-        index.html    Aplicacion completa en un solo archivo
-        README.md     Documentacion del proyecto
+- [Como poner a funcionar](#como-poner-a-funcionar)
+- [Que hace](#que-hace)
+- [Como funciona](#como-funciona)
+- [Endpoints que consume](#endpoints-que-consume)
+- [Autora](#autora)
 
 ---
 
-4. Funcionalidades
-------------------
+## Como poner a funcionar
 
-    Listar    Muestra todos los clientes al abrir la pagina
-    Crear     Formulario para registrar un nuevo cliente
-    Editar    Clic en Editar para cargar los datos y modificarlos
-    Eliminar  Clic en Eliminar con confirmacion antes de borrar
+**Paso 1 — Iniciar el backend**
 
----
+```bash
+cd demo
+.\gradlew bootRun
+```
 
-5. Como usar
-------------
+Esperar hasta ver: `Tomcat started on port 8080`
 
-Paso 1 - Iniciar el backend Spring Boot:
-    cd C:\Users\Veroo\IdeaProjects\demo
-    .\gradlew bootRun
-    Esperar hasta ver: Tomcat started on port 8080
+**Paso 2 — Abrir el frontend**
 
-Paso 2 - Abrir el frontend:
-    Ir a la carpeta C:\Users\Veroo\hotel-frontend
-    Hacer doble clic en index.html
-    O desde la terminal: start C:\Users\Veroo\hotel-frontend\index.html
+Ir a la carpeta `hotel-frontend` y hacer doble clic en `index.html`.
 
-Paso 3 - Usar la aplicacion:
-    La pagina carga automaticamente la lista de clientes
-    Llenar el formulario y dar clic en Guardar para crear un cliente
-    Dar clic en Editar para modificar un cliente existente
-    Dar clic en Eliminar para borrar un cliente
+O desde la terminal:
+
+```bash
+start index.html
+```
+
+**Listo.** La pagina carga automaticamente los clientes desde la API.
 
 ---
 
-6. Endpoints que consume
-------------------------
+## Que hace
 
-    GET    http://localhost:8080/api/clientes        Listar todos los clientes
-    POST   http://localhost:8080/api/clientes        Crear nuevo cliente
-    PUT    http://localhost:8080/api/clientes/{id}   Actualizar cliente
-    DELETE http://localhost:8080/api/clientes/{id}   Eliminar cliente
-
-Los datos que se envian al backend son:
-    nombre   : texto
-    apellido : texto
-    email    : correo electronico
+| Operacion | Descripcion |
+|-----------|-------------|
+| Listar | Muestra todos los clientes al abrir la pagina |
+| Crear | Formulario para registrar un nuevo cliente |
+| Editar | Clic en Editar para modificar un cliente |
+| Eliminar | Clic en Eliminar con confirmacion |
 
 ---
 
-7. Repositorio del backend
----------------------------
+## Como funciona
 
-El backend que consume este frontend esta en:
-    https://github.com/Veronicaosoriodurang/demo
+El frontend se comunica con el backend mediante `fetch` en JavaScript:
 
-Tecnologias del backend:
-    Spring Boot 3.5.11
-    MySQL 8.0.45
-    Patron DAO con PreparedStatement
-    Swagger OpenAPI 2.8.5
+```
+index.html abierto en el navegador
+        |
+        | fetch (HTTP)
+        v
+http://localhost:8080/api/clientes  (backend Spring Boot)
+        |
+        v
+MySQL — base de datos hoteldb
+```
 
----
-
-8. Repositorios GitHub
------------------------
-
-    Frontend : https://github.com/Veronicaosoriodurang/hotel-frontend
-    Backend  : https://github.com/Veronicaosoriodurang/demo
+No se conecta directamente a MySQL. Todo pasa por el backend.
 
 ---
 
-9. Autora
-----------
+## Endpoints que consume
 
-    Veronica Osorio Durango
-    Materia: Programacion de Software
-    Programa: Tecnologia en Desarrollo de Software
-    Institucion: ITM
-    Periodo: 2026-1
-    Entrega 4 - Frontend independiente
+| Metodo | URL | Accion |
+|--------|-----|--------|
+| GET | http://localhost:8080/api/clientes | Listar clientes |
+| POST | http://localhost:8080/api/clientes | Crear cliente |
+| PUT | http://localhost:8080/api/clientes/{id} | Actualizar cliente |
+| DELETE | http://localhost:8080/api/clientes/{id} | Eliminar cliente |
+
+**Datos que envia:**
+```json
+{
+  "nombre": "texto",
+  "apellido": "texto",
+  "email": "correo@email.com"
+}
+```
+
+---
+
+## Estructura
+
+```
+hotel-frontend/
+    index.html    Aplicacion completa en un solo archivo
+    README.md     Esta documentacion
+```
+
+---
+
+## Tecnologias
+
+| Tecnologia | Uso |
+|------------|-----|
+| HTML5 | Estructura de la pagina |
+| CSS3 | Estilos y diseno |
+| JavaScript | Logica y consumo de la API |
+
+Sin instalacion. Sin dependencias. Solo abrir el archivo.
+
+---
+
+## Backend
+
+Este frontend requiere el backend corriendo. Ver instrucciones en:
+
+[https://github.com/Veronicaosoriodurang/demo](https://github.com/Veronicaosoriodurang/demo)
+
+---
+
+## Autora
+
+| | |
+|-|-|
+| Nombre | Veronica Osorio Durango |
+| Materia | Programacion de Software |
+| Programa | Tecnologia en Desarrollo de Software |
+| Institucion | ITM |
+| Periodo | 2026-1 |
